@@ -1,51 +1,49 @@
-export let movies = [
-    {
-        id: 0,
-        name: "Avengers: Endgame",
-        score: 95
-       
-    },
-    {
-        id: 1,
-        name: "Joker",
-        score: 94
+import axios from "axios";
 
-    },
-    {
-        id: 2,
-        name: "parasite",
-        score: 99     
-    },
-    {
-        id: 3,
-        name: "SpiderMan: Home Comming",
-        score: 79       
-    },
-];
+const BASE_URL = "https://yts.lt/api/v2/"
+const LIST_MOVIE_URL = `${BASE_URL}list_movies.json`
+const MOVIE_DETAIL_URL = `${BASE_URL}movie_details.json`
+const MOVIE_SUGGESTIONS_URL = `${BASE_URL}movie_suggestions.json`
 
-export const getMovies = () => movies;
+export const getMovies = async(limit, rating) => {
+    const {
+        data: {
+            data: {movies}
+        }
+    } = await axios(LIST_MOVIE_URL, {
+            params: {
+                limit,
+                minimum_rating: rating
+            }
+        });
 
-export const getById = id => {
-    const filtermovies = movies.filter(movie => movie.id === id);
-    return filtermovies[0];
+    return movies;
 }
 
-export const deleteMovie = id => {
-    const cleanedMovies = movies.filter(movie => movie.id !== id);
-    if (movies.length > cleanedMovies.length) {
-        movies = cleanedMovies;
-        return true;
-    } else {
-        return false;
-    }
-}
+export const getMovie = async id => {
+    const {
+        data: {
+            data: {movie}
+        }
+    } = await axios(MOVIE_DETAIL_URL, {
+        params: {
+            movie_id: id
+        }
+    });
 
-export const addMovie = (name, score) => {
-    const newMovie = {
-        id: movies.length + 1,
-        name,
-        score
-    }
-    movies.push(newMovie);
-    return newMovie;
+    return movie;
+} 
+
+export const getSuggestions = async id => {
+    const {
+        data: {
+            data: {movies}
+        }
+    } = await axios(MOVIE_SUGGESTIONS_URL, {
+        params: {
+            movie_id: id
+        }
+    });
+
+    return movies;
 }
